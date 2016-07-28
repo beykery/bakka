@@ -10,13 +10,14 @@ import org.beykery.bakka.BaseActor;
  *
  * @author beykery
  */
-@Bakka(service = "Fronted",slaves = {"*"})
+@Bakka(service = "Fronted",slaves = {"Backend"})
 public class Fronted extends BaseActor
 {
 
   @Override
   protected void onMessage(Object message)
   {
+    
   }
 
 }

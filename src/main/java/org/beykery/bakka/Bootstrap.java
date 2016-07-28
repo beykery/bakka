@@ -9,7 +9,9 @@ import akka.actor.ActorSystem;
 import akka.actor.Props;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -23,6 +25,7 @@ public class Bootstrap
   private final Config config;
   private ActorSystem actorSystem;
   private boolean running;
+  private Map<Class<? extends BaseActor>, ActorRef> localActors;
 
   /**
    * 单例
@@ -30,6 +33,7 @@ public class Bootstrap
   private Bootstrap()
   {
     config = ConfigFactory.load("bkka");
+    localActors = new HashMap<>();
   }
 
   /**
@@ -37,23 +41,20 @@ public class Bootstrap
    */
   public void start()
   {
-    if (!running)
-    {
+    if (!running) {
       running = true;
       String systemName = config.getString("bakka.system.name");
       String path = config.getString("bakka.system.classpath");
       List<String> services = config.getStringList("akka.cluster.roles");
       this.actorSystem = ActorSystem.create(systemName, config);
       Set<Class<?>> classes = ClassUtil.scan(path);
-      for (Class<?> c : classes)
-      {
-        if (c.isAnnotationPresent(Bakka.class))
-        {
+      for (Class<?> c : classes) {
+        if (c.isAnnotationPresent(Bakka.class)) {
           Bakka an = c.getAnnotation(Bakka.class);
-          if (services.contains(an.service()))
-          {
+          if (services.contains(an.service())) {
             Props prop = Props.create(c).withDispatcher("dispatcher");
             ActorRef ar = actorSystem.actorOf(prop, an.service());
+            localActors.put((Class<? extends BaseActor>) c, ar);
           }
         }
       }
@@ -80,4 +81,14 @@ public class Bootstrap
     return instance;
   }
 
+  /**
+   * 本地的actorRef
+   *
+   * @param c
+   * @return
+   */
+  public ActorRef getLocalActorRef(Class<? extends BaseActor> c)
+  {
+    return this.localActors.get(c);
+  }
 }
