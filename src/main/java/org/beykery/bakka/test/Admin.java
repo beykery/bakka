@@ -14,10 +14,5 @@ import org.beykery.bakka.BaseActor;
 public class Admin extends BaseActor
 {
 
-  @Override
-  protected void onMessage(Object message)
-  {
-   
-  }
   
 }

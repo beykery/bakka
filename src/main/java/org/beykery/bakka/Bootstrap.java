@@ -32,7 +32,7 @@ public class Bootstrap
    */
   private Bootstrap()
   {
-    config = ConfigFactory.load("bkka");
+    config = ConfigFactory.load("bakka");
     localActors = new HashMap<>();
   }
 
