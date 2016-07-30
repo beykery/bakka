@@ -28,6 +28,7 @@ bakka的思路是帮助开发者在一开始就尽力化简这些问题，只需
 你的应用程序里的actor包名，系统启动的时候，这个路径下的所有actor都将会被递归扫描并启动。roles也要修改为你
 想启动的actor集合，比如有个actor叫Backend，要启动它，就把它填写到roles里面即可
 
+```java
 @Bakka(service = "Backend")
 public class Backend extends BaseActor
 {
@@ -39,6 +40,7 @@ public class Backend extends BaseActor
     return hi;
   }
 }
+```
 
 上面这个actor（必须继承BaseActor）,在@Bakka里面指定自己的服务名为Backend，如果bakka.conf里面roles集合里面有它，
 则系统启动的时候，就会被自动启动；当它收到一个类型为HI的消息的时候，hi方法（带有@BakkaRequest注解）将会被调用
@@ -49,6 +51,7 @@ bakka使用protostuff来序列化消息。所有的消息都应该实现org.beyk
 
 处理消息的时候（比如hi方法里面），如果要传递一个消息给另一个actor则访问它的services属性获取一个actor并发送即可：
 
+```java
 @Bakka(service = "Fronted",slaves = {"Backend"})
 public class Fronted extends BaseActor
 {
@@ -60,6 +63,7 @@ public class Fronted extends BaseActor
   }
 
 }
+```
 
 Fronted类的注解@Bakka声明了slaves（所依赖的其他actor），所以它就可以在services里面查找这些服务（Backend），这些服务
 可能是本地的也可能是系统其他节点提供的actor，剩下的就是按照逻辑要求选择其一或更多actor并tell消息
