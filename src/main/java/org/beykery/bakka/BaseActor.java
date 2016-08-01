@@ -100,7 +100,7 @@ public abstract class BaseActor extends UntypedActor
       if (match(this.slaves, r.getService())) {
         getContext().watch(getSender());
         this.addService(getSender(), r.getService());
-        log.info("有个slave注册进来:" + getSender());
+        log.info("有个服务注册进来:" + getSender());
       }
     } else if (message instanceof Terminated) {
       Terminated terminated = (Terminated) message;
@@ -193,5 +193,16 @@ public abstract class BaseActor extends UntypedActor
       }
     }
     return false;
+  }
+
+  /**
+   * 服务
+   *
+   * @param name
+   * @return
+   */
+  public List<ActorRef> getServices(String name)
+  {
+    return this.services.get(name);
   }
 }
