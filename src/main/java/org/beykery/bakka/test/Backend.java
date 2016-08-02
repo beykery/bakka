@@ -18,7 +18,7 @@ public class Backend extends BaseActor
   @BakkaRequest
   public HI hi(HI hi)
   {
-    System.out.println(hi+"......");
-    return hi;
+    System.out.println(hi+" backend, ......");
+    return null;
   }
 }

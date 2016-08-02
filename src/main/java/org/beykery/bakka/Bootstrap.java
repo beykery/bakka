@@ -6,6 +6,7 @@ package org.beykery.bakka;
 import org.beykery.bakka.util.ClassUtil;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
+import akka.actor.Inbox;
 import akka.actor.Props;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
@@ -13,6 +14,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import scala.concurrent.duration.Duration;
 
 /**
  *
@@ -21,11 +27,13 @@ import java.util.Set;
 public class Bootstrap
 {
 
+  private Logger logger = LoggerFactory.getLogger(Bootstrap.class);
   private Config config;
   private ActorSystem actorSystem;
   private boolean running;
   private final Map<Class<? extends BaseActor>, ActorRef> localActors;
   private final String confFile;
+  private Inbox inbox;
 
   /**
    * 構造
@@ -75,6 +83,7 @@ public class Bootstrap
     String path = config.getString("bakka.system.classpath");
     List<String> services = config.getStringList("akka.cluster.roles");
     this.actorSystem = ActorSystem.create(systemName, config);
+    this.inbox = Inbox.create(actorSystem);
     Set<Class<?>> classes = ClassUtil.scan(path);
     for (Class<?> c : classes)
     {
@@ -122,4 +131,25 @@ public class Bootstrap
   {
     return this.localActors.get(c);
   }
+  
+  /**
+   * 本地actorRef发送消息
+   * @param c
+   * @param obj
+   * @return 
+   */
+  public Serializable locatActorSend(Class<? extends BaseActor> c, Serializable obj) {
+      ActorRef ar = this.getLocalActorRef(c);
+      if(ar != null) {
+          inbox.send(ar, obj);
+          try {
+              return (Serializable) inbox.receive(Duration.create(5, TimeUnit.MINUTES));
+          } catch (TimeoutException ex) {
+              logger.error("directSend error!"+obj);
+          }
+      }
+      return null;
+  }
+  
+  
 }

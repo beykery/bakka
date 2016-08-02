@@ -17,7 +17,7 @@ public class Fronted extends BaseActor
   @BakkaRequest
   public void hi(HI hi)
   {
-    System.out.println(hi+"......");
+    System.out.println(hi+" fronted, ......");
     this.services.get("Backend").get(0).tell(hi, self());
   }
 
