@@ -21,41 +21,71 @@ import java.util.Set;
 public class Bootstrap
 {
 
-  private static final Bootstrap instance = new Bootstrap();
-  private final Config config;
+  private Config config;
   private ActorSystem actorSystem;
   private boolean running;
-  private Map<Class<? extends BaseActor>, ActorRef> localActors;
+  private final Map<Class<? extends BaseActor>, ActorRef> localActors;
+  private final String confFile;
 
   /**
-   * 单例
+   * 構造
    */
-  private Bootstrap()
+  private Bootstrap(String conf)
   {
-    config = ConfigFactory.load("bakka");
+    confFile = conf;
     localActors = new HashMap<>();
   }
 
   /**
    * 启动
+   *
+   * @param port
+   */
+  public void start(int port)
+  {
+    if (!running)
+    {
+      running = true;
+      config = ConfigFactory.parseString("akka.remote.netty.tcp.port=" + port).
+              withFallback(ConfigFactory.load(this.confFile));
+      this.start(config);
+    }
+  }
+
+  /**
+   * 启动
+   *
    */
   public void start()
   {
-    if (!running) {
+    if (!running)
+    {
       running = true;
-      String systemName = config.getString("bakka.system.name");
-      String path = config.getString("bakka.system.classpath");
-      List<String> services = config.getStringList("akka.cluster.roles");
-      this.actorSystem = ActorSystem.create(systemName, config);
-      Set<Class<?>> classes = ClassUtil.scan(path);
-      for (Class<?> c : classes) {
-        if (c.isAnnotationPresent(Bakka.class)) {
-          Bakka an = c.getAnnotation(Bakka.class);
-          if (services.contains(an.service())) {
-            Props prop = Props.create(c).withDispatcher("dispatcher");
-            ActorRef ar = actorSystem.actorOf(prop, an.service());
-            localActors.put((Class<? extends BaseActor>) c, ar);
-          }
+      config = ConfigFactory.load(this.confFile);
+      this.start(config);
+    }
+  }
+
+  /**
+   * 启动
+   */
+  private void start(Config config)
+  {
+    String systemName = config.getString("bakka.system.name");
+    String path = config.getString("bakka.system.classpath");
+    List<String> services = config.getStringList("akka.cluster.roles");
+    this.actorSystem = ActorSystem.create(systemName, config);
+    Set<Class<?>> classes = ClassUtil.scan(path);
+    for (Class<?> c : classes)
+    {
+      if (c.isAnnotationPresent(Bakka.class))
+      {
+        Bakka an = c.getAnnotation(Bakka.class);
+        if (services.contains(an.service()))
+        {
+          Props prop = Props.create(c).withDispatcher("dispatcher");
+          ActorRef ar = actorSystem.actorOf(prop, an.service());
+          localActors.put((Class<? extends BaseActor>) c, ar);
         }
       }
     }
@@ -74,11 +104,12 @@ public class Bootstrap
   /**
    * 实例
    *
+   * @param conf
    * @return
    */
-  public static Bootstrap getInstance()
+  public static Bootstrap newInstance(String conf)
   {
-    return instance;
+    return new Bootstrap(conf);
   }
 
   /**

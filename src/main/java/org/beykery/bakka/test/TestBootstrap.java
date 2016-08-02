@@ -3,7 +3,6 @@
  */
 package org.beykery.bakka.test;
 
-import org.beykery.bakka.test.HI;
 import akka.actor.ActorRef;
 import akka.actor.ActorSelection;
 import akka.actor.PoisonPill;
@@ -20,7 +19,7 @@ public class TestBootstrap
 
   public static void main(String[] args) throws InterruptedException, Exception
   {
-    Bootstrap bs = Bootstrap.getInstance();
+    Bootstrap bs = Bootstrap.newInstance("bakka");
     bs.start();
     Thread.sleep(6000);
     ActorSelection as = bs.getActorSystem().actorSelection("/user/Backend");
