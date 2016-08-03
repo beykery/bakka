@@ -36,16 +36,20 @@ public class TestBootstrap
     Thread.sleep(6000);
     ActorSelection as2 = bs2.getActorSystem().actorSelection("/user/Backend");
     as2.tell(new HI("hi, I'm backend!"),ActorRef.noSender());
-    //System.out.println("Backend".matches("\\w*"));
+   
 
     Bootstrap bs1 = Bootstrap.newInstance("bakka_fronted");
     bs1.start();
     Thread.sleep(6000);
     ActorSelection as1 = bs1.getActorSystem().actorSelection("/user/Fronted");
-//    as1.tell(new HI("hi, I'm fronted!"),ActorRef.noSender());
+
    
 
-    HI hi = (HI) bs.locatActorSend(Admin.class, new HI("i am hi"));
-      System.out.println("hi="+hi);
+//    HI hi = (HI) bs.locatActorSend(Admin.class, new HI("i am hi"));
+//    System.out.println("hi="+hi);
+    
+//    as.tell(new Tree("root"), ActorRef.noSender());
+//      Tree tree = (Tree) bs.locatActorSend(Admin.class, new Tree("root"));
+      
   }
 }

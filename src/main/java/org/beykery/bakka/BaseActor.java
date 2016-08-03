@@ -100,7 +100,11 @@ public abstract class BaseActor extends UntypedActor
       if (match(this.slaves, r.getService())) {
         getContext().watch(getSender());
         this.addService(getSender(), r.getService());
-        log.info("有个服务注册进来:" + getSender());
+        log.info("register success! sender =" + getSender());
+        log.info("register success! self =" + this.self());
+      } else {
+          log.info("register failed! r.service = " + r.getService());
+          log.info("register failed! this.service=" + this.service);
       }
     } else if (message instanceof Terminated) {
       Terminated terminated = (Terminated) message;

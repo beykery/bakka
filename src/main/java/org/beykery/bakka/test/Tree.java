@@ -3,6 +3,8 @@
  */
 package org.beykery.bakka.test;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.beykery.bakka.Serializable;
 
 /**
@@ -12,13 +14,13 @@ import org.beykery.bakka.Serializable;
 public class Tree implements Serializable
 {
 
-  private String path;
-  private String child;
+private List<Tree> children=new ArrayList<>();
+    private String name;
   
 
-  public Tree(String path)
+  public Tree(String name)
   {
-    this.path = path;
+   this.name=name;
   }
 
   public Tree()
@@ -28,21 +30,13 @@ public class Tree implements Serializable
   @Override
   public String toString()
   {
-    return this.path;
+    return this.name;
   }
 
-    /**
-     * @return the child
-     */
-    public String getChild() {
-        return child;
-    }
+  public void add(Tree child) {
+        this.children.add(child);
+  }
 
-    /**
-     * @param child the child to set
-     */
-    public void setChild(String child) {
-        this.child = child;
-    }
+  
 
 }
