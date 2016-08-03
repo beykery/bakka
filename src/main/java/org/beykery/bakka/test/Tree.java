@@ -33,6 +33,22 @@ private List<Tree> children=new ArrayList<>();
     return this.name;
   }
 
+    public List<Tree> getChildren() {
+        return children;
+    }
+
+    public void setChildren(List<Tree> children) {
+        this.children = children;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
   public void add(Tree child) {
         this.children.add(child);
   }

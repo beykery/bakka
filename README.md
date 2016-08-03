@@ -8,7 +8,7 @@
   <dependency>
       <groupId>org.beykery</groupId>
       <artifactId>bakka</artifactId>
-      <version>1.0.1</version>
+      <version>1.0.6</version>
   </dependency>
 ```
 

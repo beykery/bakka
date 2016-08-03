@@ -26,7 +26,7 @@ public class TestBootstrap
     
     Bootstrap bs = Bootstrap.newInstance("bakka");
     bs.start();
-    Thread.sleep(6000);    
+    Thread.sleep(10000);    
     ActorSelection as = bs.getActorSystem().actorSelection("/user/Admin");
     as.tell(new HI("hi, I'm admin!"),ActorRef.noSender());
     
@@ -49,7 +49,8 @@ public class TestBootstrap
 //    System.out.println("hi="+hi);
     
 //    as.tell(new Tree("root"), ActorRef.noSender());
-//      Tree tree = (Tree) bs.locatActorSend(Admin.class, new Tree("root"));
+    Thread.sleep(30000); 
+    Tree tree = (Tree) bs.locatActorSend(Admin.class, new Tree("root"));
       
   }
 }
